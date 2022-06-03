@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+{% import 'tablemacro.j2' as tm %}
+
+<html lang="en">
+<head>
+    <title>Lehtio proteomics QC report</title>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+</head>
+<body>
+<div class="container">
+  <h2 class="title is-2">QC for {{ searchname }}</h2>
+  <h6 class="title is-6">
+    Pipeline DOI: <a href="https://doi.org/10.5281/zenodo.3548311">10.5281/zenodo.3548311</a> (resolves to latest version)
+  </h6>
+  <hr>
+  <h3 class="title is-3">Protein/peptide level QC</h3>
+  <h4 class="title is-4">Summary</h4>
+  {{ tm.table(sumtable, tablefieldtitles) }}
+  <hr>
+  <h4 class="title is-4">Overlap</h4>
+  <div class="columns">
+  {% for feat in overlap %}
+  <div class="column">
+  <h5 class="title is-5">{{ featnames[feat] }}</h5>
+  {{ tm.table(overlap[feat], tablefieldtitles) }}
+  </div>
+  {% endfor %}
+  </div>
+  <hr>
+
+{% for graphtype in ["featyield", "isobaric", "pca"] %}
+  {% if graphtype in features['peptides'] or ('proteins' in features and graphtype in features['proteins']) %}
+  <h4 class="title is-4">{{ titles[graphtype] }}</h4>
+  <div class="columns">
+    {% for feat in features %}
+    <div class="column">
+      <h5 class="title is-5">{{ featnames[feat] }}</h5>
+      {{ features[feat][graphtype] }}
+    </div>
+    {% endfor %}
+    {% if graphtype == "isobaric" and 'normfac' in features['proteins'] %}
+    <div class="column">
+      <h5 class="title is-5">Median centering</h5>
+        {{ features['proteins']['normfac']}}
+    </div>
+    {% endif %}
+  </div>
+<hr>
+{% endif %}
+{% endfor %}
+</div>
+
+{% if ptms|length %}
+{% include 'ptmqc.j2' %}
+{% endif %}
+
+</body>
+</html>
