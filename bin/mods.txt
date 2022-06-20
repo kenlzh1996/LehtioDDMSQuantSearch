@@ -1,0 +1,4 @@
+57.021464,C,fix,any,Carbamidomethyl
+15.994915,M,opt,any,Oxidation
+304.207146,*,fix,N-term,TMTpro
+304.207146,K,fix,any,TMTpro
